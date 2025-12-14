@@ -45,15 +45,3 @@ jobs:
         run: |
             ./DynamoRIO-Linux-11.3.0-1/bin64/drrun -c ./DynamoRIO-Linux-11.3.0-1/samples/bin64/libinscount.so -- \
             date
-
-  create-artifact:
-    runs-on: ubuntu-24.04
-    steps:
-      - name: Create a file
-        run: echo "Hello, World!" > hello.txt
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v6
-        with:
-          name: hello-artifact
-          path: hello.txt

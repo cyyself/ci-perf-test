@@ -1,0 +1,23 @@
+name: Upload data
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  create-artifact:
+    runs-on: ubuntu-24.04
+    env:
+      PR_NUMBER: ${{ github.event.pull_request.number || 'no-pr' }}
+    steps:
+      - name: Create a file
+        run: echo "Hello, World!" > ${PR_NUMBER}.txt
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: hello-artifact
+          path: ${{ env.PR_NUMBER }}.txt
