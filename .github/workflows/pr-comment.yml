@@ -7,14 +7,14 @@ on:
       - completed
 
 jobs:
-  use-artifact:
+  comment-on-pr:
     if: github.event.workflow_run.event == 'pull_request' &&
         github.event.workflow_run.conclusion == 'success'
     env:
       PR_NUMBER: ${{ github.event.workflow_run.pull_requests[0].number}}
     runs-on: ubuntu-24.04
     steps:
-      - name: Download artifact
+      - name: comment with artifact data
         uses: actions/github-script@v8
         with:
           script: |
@@ -35,12 +35,18 @@ jobs:
             });
             const fs = require('fs');
             const path = require('path');
+            const unzipper = require('unzipper');
             const temp = '${{ runner.temp }}/artifacts';
-            if (!fs.existsSync(temp)){
-              fs.mkdirSync(temp);
-            }
-            fs.writeFileSync(path.join(temp, artifactName + '.zip'), Buffer.from(download.data));
-      - name: Read the file
-        run: |
-          unzip ${{ runner.temp }}/artifacts/hello-artifact.zip -d ${{ runner.temp }}/artifacts
-          cat ${{ runner.temp }}/artifacts/${{ env.PR_NUMBER }}.txt
+            fs.mkdirSync(extractPath, { recursive: true });
+            const buffer = Buffer.from(await downloadResponse.data.arrayBuffer());
+            const stream = unzipper.Extract({ path: extractPath });
+            stream.on('close', () => { console.log('Artifact extracted successfully.'); });
+            stream.end(buffer);
+            // read the file
+            fs.readFileSync(path.join(extractPath, `${process.env.PR_NUMBER}.txt`), 'utf8');
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: process.env.PR_NUMBER,
+              body: `Contents of the artifact file:\n\n\`\`\`\n${fileContent}\n\`\`\``,
+            });
