@@ -7,7 +7,6 @@ on:
       - completed
 
 permissions:
-  actions: read
   artifact-metadata: read
   issues: write
   pull-requests: write
