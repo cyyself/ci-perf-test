@@ -14,7 +14,7 @@ jobs:
       PR_NUMBER: ${{ github.event.pull_request.number || 'no-pr' }}
     steps:
       - name: Create a file
-        run: echo "Hello, World!" > ${PR_NUMBER}.txt
+        run: echo -e "Hello, World.\n" > ${PR_NUMBER}.txt
 
       - name: Upload artifact
         uses: actions/upload-artifact@v6
