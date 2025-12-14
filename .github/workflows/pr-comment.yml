@@ -51,6 +51,7 @@ jobs:
       - name: Read and comment
         uses: actions/github-script@v8
         with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const fs = require('fs');
             const path = require('path');
