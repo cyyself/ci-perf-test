@@ -10,6 +10,7 @@ permissions:
   actions: read
   artifact-metadata: read
   issues: write
+  pull_requests: write
 
 jobs:
   comment-on-pr:
